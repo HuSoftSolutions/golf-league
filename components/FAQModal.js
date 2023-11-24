@@ -11,7 +11,7 @@ const FAQModal = ({ isOpen, onClose }) => {
             <li>
               <strong>How is the net score calculated?</strong>
               <p>
-                The net score is calculated by subtracting the player's handicap
+                The net score is calculated by subtracting the players handicap
                 from their total score.
               </p>
             </li>

@@ -3,11 +3,14 @@ import { addDoc, updateDoc, doc, collection, deleteDoc } from 'firebase/firestor
 import { db } from '../firebaseConfig';
 import usePlayers from '../hooks/usePlayers';
 import PlayerModal from './PlayerModal';
+import { useRouter } from 'next/router';
 
 const ManagePlayers = ({ locationId, scorekeeper }) => {
   const players = usePlayers(locationId);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState(null);
+	const router = useRouter();
+	const {leagueId} = router.query;
 
   const openModal = (player = null) => {
     setEditingPlayer(player ? { ...player } : null);
@@ -58,6 +61,13 @@ const ManagePlayers = ({ locationId, scorekeeper }) => {
               <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{player.displayName}</td>
               <td className="px-6 py-4 whitespace-nowrap text-gray-500">{player.hdcp}</td>
               <td className="px-6 py-4 whitespace-nowrap text-right font-medium">
+							<button 
+                  onClick={() => router.push(`/location/${locationId}/league/${leagueId}/${player.id}`)}
+                  className="text-indigo-600 hover:text-indigo-900 mr-4"
+                >
+                  View
+                </button>
+
                 <button 
                   onClick={() => openModal(player)}
                   className="text-indigo-600 hover:text-indigo-900 mr-4"
