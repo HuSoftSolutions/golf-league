@@ -1,4 +1,4 @@
-import firebase, { initializeApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getFunctions, httpsCallable } from "@firebase/functions";
@@ -25,5 +25,3 @@ const logEvent = httpsCallable(functions, "logEvent");
 const sendEmail = httpsCallable(functions, "sendEmail");
 
 export { db, auth, verifyRecaptcha, validateRecaptcha, logEvent, sendEmail };
-
-export default firebase;
