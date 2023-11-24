@@ -1,20 +1,164 @@
-import type { Config } from 'tailwindcss'
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      animation: {
+        check: "check 2s ease-in-out",
+      },
+      keyframes: {
+        check: {
+          "0%": { opacity: 0, transform: "scale(0)" },
+          "50%": { opacity: 1, transform: "scale(1.5)" },
+          "100%": { opacity: 1, transform: "scale(1)" },
+        },
+      },
+      gridTemplateColumns: {
+        // Simple 5 column grid
+        // 5: "repeat(5, minmax(0, 1fr))",
+      },
+
+      fontFamily: {
+        "bruno-ace-sc": ["Bruno Ace SC Regular", "sans-serif"],
+      },
+      backgroundColor: {
+        primary: {
+          DEFAULT: "#2A669F",
+          50: "#E4F7F8",
+          100: "#CCEEF2",
+          200: "#9CD7E5",
+          300: "#6CB9D8",
+          400: "#3B94CB",
+          500: "#2A669F",
+          600: "#234B83",
+          700: "#1B3366",
+          800: "#14204A",
+          900: "#0C102E",
+          950: "#080A20",
+        },
+
+        // primary: {
+        //   DEFAULT: "#166064",
+        //   50: "#57D3DA",
+        //   100: "#47CFD6",
+        //   200: "#2CC0C8",
+        //   300: "#25A0A7",
+        //   400: "#1D8085",
+        //   500: "#166064",
+        //   600: "#0C3436",
+        //   700: "#020808",
+        //   800: "#000000",
+        //   900: "#000000",
+        // },
+        // primary: {
+        //   DEFAULT: "#DD5F60",
+        //   50: "#FDF6F6",
+        //   100: "#FAE6E6",
+        //   200: "#F2C4C4",
+        //   300: "#ECA7A7",
+        //   400: "#E78D8E",
+        //   500: "#E17071",
+        //   600: "#D33132",
+        //   700: "#A82425",
+        //   800: "#7A1A1B",
+        //   900: "#4C1011",
+        //   950: "#340B0B",
+        // },
+      },
+      textColor: {
+        primary: {
+          DEFAULT: "#2A669F",
+          50: "#E4F7F8",
+          100: "#CCEEF2",
+          200: "#9CD7E5",
+          300: "#6CB9D8",
+          400: "#3B94CB",
+          500: "#2A669F",
+          600: "#234B83",
+          700: "#1B3366",
+          800: "#14204A",
+          900: "#0C102E",
+          950: "#080A20",
+        },
+        // primary: {
+        //   DEFAULT: "#166064",
+        //   50: "#57D3DA",
+        //   100: "#47CFD6",
+        //   200: "#2CC0C8",
+        //   300: "#25A0A7",
+        //   400: "#1D8085",
+        //   500: "#166064",
+        //   600: "#0C3436",
+        //   700: "#020808",
+        //   800: "#000000",
+        //   900: "#000000",
+        // },
+        // primary: {
+        //   DEFAULT: "#DD5F60",
+        //   50: "#FDF6F6",
+        //   100: "#FAE6E6",
+        //   200: "#F2C4C4",
+        //   300: "#ECA7A7",
+        //   400: "#E78D8E",
+        //   500: "#E17071",
+        //   600: "#D33132",
+        //   700: "#A82425",
+        //   800: "#7A1A1B",
+        //   900: "#4C1011",
+        //   950: "#340B0B",
+        // },
+      },
+      borderColor: {
+        primary: {
+          DEFAULT: "#2A669F",
+          50: "#E4F7F8",
+          100: "#CCEEF2",
+          200: "#9CD7E5",
+          300: "#6CB9D8",
+          400: "#3B94CB",
+          500: "#2A669F",
+          600: "#234B83",
+          700: "#1B3366",
+          800: "#14204A",
+          900: "#0C102E",
+          950: "#080A20",
+        },
+        // primary: {
+        //   DEFAULT: "#166064",
+        //   50: "#57D3DA",
+        //   100: "#47CFD6",
+        //   200: "#2CC0C8",
+        //   300: "#25A0A7",
+        //   400: "#1D8085",
+        //   500: "#166064",
+        //   600: "#0C3436",
+        //   700: "#020808",
+        //   800: "#000000",
+        //   900: "#000000",
+        // },
+        // primary: {
+        //   DEFAULT: "#DD5F60",
+        //   50: "#FDF6F6",
+        //   100: "#FAE6E6",
+        //   200: "#F2C4C4",
+        //   300: "#ECA7A7",
+        //   400: "#E78D8E",
+        //   500: "#E17071",
+        //   600: "#D33132",
+        //   700: "#A82425",
+        //   800: "#7A1A1B",
+        //   900: "#4C1011",
+        //   950: "#340B0B",
+        // },
       },
     },
   },
-  plugins: [],
-}
-export default config
+  plugins: [
+    require("tailwind-scrollbar")({ nocompatible: true }),
+    require("@tailwindcss/aspect-ratio"),
+  ],
+};
