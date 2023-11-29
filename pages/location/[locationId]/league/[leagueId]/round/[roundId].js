@@ -12,6 +12,8 @@ import Confetti from "react-confetti"; // Import confetti package
 import { FaPlus, FaMinus, FaPeopleGroup, FaTrophy } from "react-icons/fa6";
 import { FaArrowAltCircleLeft } from "react-icons/fa";
 import withAuth from "../../../../../../hocs/withAuth";
+import useWindowDimensions from "../../../../../../hooks/useWindowDimensions";
+import RoundCompletionModal from "../../../../../../components/RoundCompletionModal";
 
 const RoundDetails = () => {
   const router = useRouter();
@@ -25,6 +27,8 @@ const RoundDetails = () => {
     roundId,
     user?.uid
   );
+
+	const {width, height} = useWindowDimensions();
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [roundDetails, setRoundDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,13 +45,16 @@ const RoundDetails = () => {
   }, [holesLeft]);
 
 	useEffect(() => {
-    const completedHoles = calculateCompletedHoles();
-    setHolesLeft(9 - completedHoles); // Assuming 9 holes in total
-    if (completedHoles === 9) {
-        setShowConfetti(true);
-        setShowCompletionModal(true);
-    }
-}, [currentHole]);
+		const allScoresEntered = selectedPlayers.every(
+			player => Object.keys(player.scores).length === 9 && Object.values(player.scores).every(score => score > 0)
+		);
+	
+		if (allScoresEntered) {
+			setShowCompletionModal(true);
+			setShowConfetti(true);
+		}
+	}, [selectedPlayers]);
+	
 
 useEffect(() => {
 	const completedHoles = calculateCompletedHoles();
@@ -218,7 +225,7 @@ useEffect(() => {
                   <FaMinus className="w-5 h-5" />
 
                 </button>
-                <span className="p-2 w-[60px] text-center">
+                <span className="p-2 w-[60px] text-4xl text-center">
                   {player.scores[currentHole] || 0}
                 </span>
                 <button
@@ -257,9 +264,9 @@ useEffect(() => {
         
           <button
             onClick={openModalForEditing}
-            className="bg-blue-500 text-white p-2 rounded text-xs"
+            className="bg-blue-500 text-white p-2 rounded text-xs flex items-center"
           >
-            <FaPeopleGroup className="w-5 h-5"/>
+          <FaPeopleGroup className="w-5 h-5"/><span className="ml-2">Manage Players</span>
           </button>
         
       </div>
@@ -285,6 +292,16 @@ useEffect(() => {
           onClose={() => setIsModalOpen(false)}
         />
       )}
+		{showConfetti && <Confetti width={width} height={height} />}
+		<RoundCompletionModal
+  isOpen={showCompletionModal}
+  onClose={() => {
+    setShowCompletionModal(false);
+    setShowConfetti(false);
+  }}
+  players={selectedPlayers}
+/>
+
     </div>
   );
 };

@@ -24,43 +24,40 @@ export default function HomePage() {
   const [isInvalid, setIsInvalid] = useState(false);
   const { user, signInWithGoogle } = useAuth();
 
-	const handleBackspace = (event) => {
-		if (event.key === 'Backspace' && !leagueCodeDigits[index]) {
-			if (index > 0) {
-				document.querySelector(`.code-input:nth-child(${index})`).focus();
-			}
-		}
-	};
+  const handleBackspace = (event) => {
+    if (event.key === "Backspace" && !leagueCodeDigits[index]) {
+      if (index > 0) {
+        document.querySelector(`.code-input:nth-child(${index})`).focus();
+      }
+    }
+  };
 
-	const handleKeyDown = (e, index) => {
-		if (e.key === 'Backspace' && index !== 0 && !leagueCodeDigits[index]) {
-			document.querySelector(`.code-input:nth-child(${index})`).focus();
-		}
-	};
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && index !== 0 && !leagueCodeDigits[index]) {
+      document.querySelector(`.code-input:nth-child(${index})`).focus();
+    }
+  };
 
-	const handleDigitChange = (e, index) => {
-		const newDigits = [...leagueCodeDigits];
-		newDigits[index] = e.target.value.slice(0, 1);
-		setLeagueCodeDigits(newDigits);
-	
-		// Reset error state if not all digits are filled
-		if (!newDigits.every((digit) => digit) || newDigits.length !== 6) {
-			if (isInvalid) setIsInvalid(false);
-		}
-	
-		// Move focus to next input
-		if (index < leagueCodeDigits.length - 1 && e.target.value) {
-			document.querySelector(`.code-input:nth-child(${index + 2})`).focus();
-		}
-	
-		// Check if all digits are entered and submit
-		if (newDigits.every((digit) => digit) && newDigits.length === 6) {
-			submitLeagueCode(newDigits.join(""));
-		}
+  const handleDigitChange = (e, index) => {
+    const newDigits = [...leagueCodeDigits];
+    newDigits[index] = e.target.value.slice(0, 1);
+    setLeagueCodeDigits(newDigits);
 
-	
-	};
-	
+    // Reset error state if not all digits are filled
+    if (!newDigits.every((digit) => digit) || newDigits.length !== 6) {
+      if (isInvalid) setIsInvalid(false);
+    }
+
+    // Move focus to next input
+    if (index < leagueCodeDigits.length - 1 && e.target.value) {
+      document.querySelector(`.code-input:nth-child(${index + 2})`).focus();
+    }
+
+    // Check if all digits are entered and submit
+    if (newDigits.every((digit) => digit) && newDigits.length === 6) {
+      submitLeagueCode(newDigits.join(""));
+    }
+  };
 
   const submitLeagueCode = async (code) => {
     try {
@@ -113,7 +110,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-white">
       <Navbar style="light"></Navbar>
 
       <div className="flex flex-grow flex-col items-center justify-center text-primary-800 ">
@@ -127,23 +124,22 @@ export default function HomePage() {
               </p>
               <div className="code-input-container">
                 {leagueCodeDigits.map((digit, index) => (
-  <input
-	key={index}
-	type="text"
-	maxLength="1"
-	value={digit}
-	onChange={(e) => handleDigitChange(e, index)}
-	onKeyDown={(e) => handleKeyDown(e, index)}
-	onFocus={(e) => e.target.select()}
-	className={`code-input ${isInvalid ? "input-shake" : ""}`}
-/>
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength="1"
+                    value={digit}
+                    onChange={(e) => handleDigitChange(e, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    onFocus={(e) => e.target.select()}
+                    className={`code-input ${isInvalid ? "input-shake" : ""}`}
+                  />
                 ))}
               </div>
-              
-                <p className="text-red-500 mt-2 h-[50px]">
-								{isInvalid ? "Invalid Code. Please try again." : ""}
-                </p>
-              
+
+              <p className="text-red-500 mt-2 h-[50px]">
+                {isInvalid ? "Invalid Code. Please try again." : ""}
+              </p>
             </div>
           ) : (
             <button
