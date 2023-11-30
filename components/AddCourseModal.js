@@ -70,7 +70,7 @@ const AddCourseModal = ({ locationId, course, onClose }) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
       <div className="relative mx-auto p-6 border w-full max-w-lg shadow-lg rounded-md bg-white">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-black">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Course Name
