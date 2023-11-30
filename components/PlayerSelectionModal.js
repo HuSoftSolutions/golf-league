@@ -46,7 +46,7 @@ const PlayerSelectionModal = ({
               label: player.displayName,
             }))}
             onChange={handleChange}
-            className="mb-4"
+            className="mb-4 text-black"
           />
         </div>
         <div className="flex justify-between mt-4">

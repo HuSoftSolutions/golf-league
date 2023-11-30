@@ -69,13 +69,14 @@ const LeagueRounds = () => {
 
   // Function to display players from the array
   const displayPlayers = (playersArray) => {
+		console.log(playersArray?.[0]?.scores)
     return playersArray.map((player, index) => (
       <li key={index}>
         {player.displayName}
         {/* Calculate and display total score */}
         {player.scores && (
           <span>
-            : Total Score -{" "}
+            : {" "}
             {Object.values(player.scores).reduce(
               (total, score) => total + score,
               0
@@ -180,6 +181,7 @@ const LeagueRounds = () => {
                   </div>
                 )}
               </div>
+							<div className="flex">
               <button
                 onClick={() => handlePlayNow(round.id)}
                 className={`mt-4 font-bold py-2 px-4 rounded w-full ${getButtonStyle(
@@ -188,6 +190,13 @@ const LeagueRounds = () => {
               >
                 {getButtonText(getRoundStatus(round))}
               </button>
+							<button
+                onClick={() => router.push(`/location/${locationId}/league/${leagueId}/round/${round.id}/results`)}
+                className={`mt-4 font-bold py-2 px-4 rounded w-full `}
+              >
+                Results
+              </button>
+							</div>
             </div>
           ))}
       </div>

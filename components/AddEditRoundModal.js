@@ -85,7 +85,7 @@ const AddEditRoundModal = ({ locationId, leagueId, round, onClose }) => {
           <div className="flex justify-end space-x-2">
             <button
               type="submit"
-              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
+              className="px-4 py-2 bg-primary-600 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 text-white"
             >
               {round ? 'Update Round' : 'Add Round'}
             </button>

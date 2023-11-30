@@ -8,10 +8,8 @@ import usePlayers from "../../../../../../hooks/usePlayers";
 import useUserScores from "../../../../../../hooks/useUserScores";
 import PlayerSelectionModal from "../../../../../../components/PlayerSelectionModal";
 import NavigationButtons from "../../../../../../components/NavigationButtons";
-import Confetti from "react-confetti"; // Import confetti package
-import { FaPlus, FaMinus, FaPeopleGroup, FaTrophy } from "react-icons/fa6";
-import { FaArrowAltCircleLeft } from "react-icons/fa";
-import withAuth from "../../../../../../hocs/withAuth";
+import Confetti from "react-confetti";
+import { FaPlus, FaMinus, FaPeopleGroup, FaArrowAltCircleLeft } from "react-icons/fa";
 import useWindowDimensions from "../../../../../../hooks/useWindowDimensions";
 import RoundCompletionModal from "../../../../../../components/RoundCompletionModal";
 
@@ -21,95 +19,26 @@ const RoundDetails = () => {
   const { user } = useAuth();
   const courses = useCourses(locationId);
   const players = usePlayers(locationId);
-  const { userScores, isLoading } = useUserScores(
+  const { selectedPlayers, setSelectedPlayers, hasUnsavedChanges, isLoading } = useUserScores(
     locationId,
     leagueId,
     roundId,
     user?.uid
   );
 
-	const {width, height} = useWindowDimensions();
-  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const { width, height } = useWindowDimensions();
   const [roundDetails, setRoundDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentHole, setCurrentHole] = useState(0);
-  const [holesLeft, setHolesLeft] = useState(9); // Total number of holes
+  const [holesLeft, setHolesLeft] = useState(9);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-
-  useEffect(() => {
-    if (holesLeft === 0) {
-      setShowConfetti(true);
-      setShowCompletionModal(true);
-    }
-  }, [holesLeft]);
-
-	useEffect(() => {
-		const allScoresEntered = selectedPlayers.every(
-			player => Object.keys(player.scores).length === 9 && Object.values(player.scores).every(score => score > 0)
-		);
-	
-		if (allScoresEntered) {
-			setShowCompletionModal(true);
-			setShowConfetti(true);
-		}
-	}, [selectedPlayers]);
-	
-
-useEffect(() => {
-	const completedHoles = calculateCompletedHoles();
-	setHolesLeft(9 - completedHoles);
-}, [selectedPlayers]); // Runs only when selectedPlayers changes, i.e., on component mount
-
-
-
-  useEffect(() => {
-    if (!userScores && players.length > 0 && user) {
-      setIsModalOpen(true);
-    }
-  }, [userScores, players, user]);
-
-  useEffect(() => {
-    const fetchUserScores = async () => {
-      if (roundId && user) {
-        try {
-          const db = getFirestore();
-          const userScoreRef = doc(
-            db,
-            `locations/${locationId}/leagues/${leagueId}/rounds/${roundId}/user-scores`,
-            user?.uid
-          );
-          const userScoreSnap = await getDoc(userScoreRef);
-
-          if (userScoreSnap.exists()) {
-            const userScoreData = userScoreSnap.data();
-            if (userScoreData.players && userScoreData.players.length > 0) {
-              setSelectedPlayers(
-                userScoreData.players.map((player) => ({
-                  ...player,
-                  scores: player.scores || {},
-                }))
-              );
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching user scores:", error);
-        }
-      }
-    };
-
-    fetchUserScores();
-  }, [roundId, user, locationId, leagueId]);
 
   useEffect(() => {
     const fetchRoundDetails = async () => {
       if (roundId) {
         const db = getFirestore();
-        const roundRef = doc(
-          db,
-          `locations/${locationId}/leagues/${leagueId}/rounds`,
-          roundId
-        );
+        const roundRef = doc(db, `locations/${locationId}/leagues/${leagueId}/rounds`, roundId);
         const roundSnap = await getDoc(roundRef);
 
         if (roundSnap.exists()) {
@@ -123,62 +52,37 @@ useEffect(() => {
     fetchRoundDetails();
   }, [locationId, leagueId, roundId]);
 
-  const openModalForEditing = () => {
-    setIsModalOpen(true);
-  };
-
-	const calculateCompletedHoles = () => {
-    let completedHoles = 0;
-    for (let i = 0; i < 9; i++) {
-        if (selectedPlayers.every(
-            (player) => player.scores[i] > 0
-        )) {
-            completedHoles++;
+  useEffect(() => {
+    const calculateCompletedHoles = () => {
+      let completedHoles = 0;
+      for (let i = 0; i < 9; i++) {
+        if (selectedPlayers?.every((player) => player.scores[i] > 0)) {
+          completedHoles++;
         }
-    }
-    return completedHoles;
-};
+      }
+      return completedHoles;
+    };
 
+    const completedHoles = calculateCompletedHoles();
+    setHolesLeft(9 - completedHoles);
+  }, [selectedPlayers]);
 
-
-  const handleSavePlayers = async () => {
-    try {
-      const db = getFirestore();
-      const userScoreRef = doc(
-        db,
-        `locations/${locationId}/leagues/${leagueId}/rounds/${roundId}/user-scores`,
-        user?.uid
-      );
-      await setDoc(userScoreRef, { players: selectedPlayers }, { merge: true });
-      alert("Players saved successfully");
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error saving players:", error);
-      alert("Error saving players");
-    }
-  };
-
-  const handleNavigate = async (direction) => {
-    await saveScores();
+  const handleNavigate = (direction) => {
     let nextSpot = currentHole + direction;
-    console.log(nextSpot);
     if (nextSpot < 0) nextSpot = 8;
     else if (nextSpot > 8) nextSpot = 0;
-
     setCurrentHole(nextSpot);
   };
 
   const saveScores = async () => {
     try {
       const db = getFirestore();
-      const userScoreRef = doc(
-        db,
-        `locations/${locationId}/leagues/${leagueId}/rounds/${roundId}/user-scores`,
-        user?.uid
-      );
+      const userScoreRef = doc(db, `locations/${locationId}/leagues/${leagueId}/rounds/${roundId}/user-scores`, user?.uid);
       await setDoc(userScoreRef, { players: selectedPlayers }, { merge: true });
+      // alert("Scores saved successfully");
     } catch (error) {
       console.error("Error saving scores:", error);
+      alert("Error saving scores");
     }
   };
 
@@ -188,8 +92,7 @@ useEffect(() => {
         if (player.id === playerId) {
           const currentScore = player.scores[currentHole] || 0;
           const newScore = Math.max(0, Math.min(12, currentScore + change));
-          const newScores = { ...player.scores, [currentHole]: newScore };
-          return { ...player, scores: newScores };
+          return { ...player, scores: { ...player.scores, [currentHole]: newScore } };
         }
         return player;
       })
@@ -197,44 +100,24 @@ useEffect(() => {
   };
 
   const renderScoreInputs = () => {
-    if (selectedPlayers.length === 0) {
-      return (
-        <div className="w-full h-full bg-gray-200 rounded p-2 justify-center items-center flex">
-          No players added.
-        </div>
-      );
+    if (!selectedPlayers?.length) {
+      return <div className="w-full h-full bg-gray-200 rounded p-2 justify-center items-center flex text-black">No players added.</div>;
     }
 
     return (
       <>
-        <NavigationButtons
-          currentHole={currentHole}
-          totalHoles={9} // Adjust based on the total number of holes
-          onNavigate={handleNavigate}
-        />
+        <NavigationButtons currentHole={currentHole} totalHoles={9} onNavigate={handleNavigate} />
         <div className="flex flex-col">
           {selectedPlayers.map((player) => (
-            <div key={player.id} className="flex items-center justify-between py-4 border-t">
+            <div key={player.id} className="flex items-center justify-between py-1 border-t">
               <span className="text-xs font-medium">{player.displayName}</span>
               <div className="flex items-center">
-                <button
-                  className="bg-gray-500 text-white rounded-l p-2 px-6"
-                  onClick={() => handleScoreUpdate(player.id, -1)}
-                  disabled={player.scores[currentHole] <= 0}
-                >
+                <button className="bg-gray-500 text-white rounded-l p-2 px-6" onClick={() => handleScoreUpdate(player.id, -1)} disabled={player.scores[currentHole] <= 0}>
                   <FaMinus className="w-5 h-5" />
-
                 </button>
-                <span className="p-2 w-[60px] text-4xl text-center">
-                  {player.scores[currentHole] || 0}
-                </span>
-                <button
-                  className="bg-gray-500 text-white rounded-r p-2 px-6"
-                  onClick={() => handleScoreUpdate(player.id, 1)}
-                  disabled={player.scores[currentHole] >= 12}
-                >
+                <span className="p-2 w-[60px] text-4xl text-center">{player.scores[currentHole] || 0}</span>
+                <button className="bg-gray-500 text-white rounded-r p-2 px-6" onClick={() => handleScoreUpdate(player.id, 1)} disabled={player.scores[currentHole] >= 12}>
                   <FaPlus className="w-5 h-5" />
-                  
                 </button>
               </div>
             </div>
@@ -252,56 +135,42 @@ useEffect(() => {
     return <div>Loading round details...</div>;
   }
 
-  const courseName =
-    courses.find((course) => course.id === roundDetails.course.id)?.name ||
-    "Unknown Course";
+  const courseName = courses.find((course) => course.id === roundDetails.course.id)?.name || "Unknown Course";
 
   return (
     <div className="flex flex-col w-full p-2 relative">
       <div className="flex justify-between items-center border-b pb-3">
-				<FaArrowAltCircleLeft className="w-8 h-8" onClick={() => router.back()}/>
-        
-        
-          <button
-            onClick={openModalForEditing}
-            className="bg-blue-500 text-white p-2 rounded text-xs flex items-center"
-          >
-          <FaPeopleGroup className="w-5 h-5"/><span className="ml-2">Manage Players</span>
-          </button>
-        
+        <FaArrowAltCircleLeft className="w-8 h-8" onClick={() => router.back()} />
+				<button
+                onClick={() => router.push(`/location/${locationId}/league/${leagueId}/round/${roundId}/results`)}
+                className={`bg-blue-500 text-white p-2 rounded text-xs flex items-center`}
+              >
+                Results
+              </button>
+        <button onClick={() => setIsModalOpen(true)} className="bg-blue-500 text-white p-2 rounded text-xs flex items-center">
+          Add Players
+        </button>
       </div>
-      <div className=" text-xs pt-2">
-        {/* ... existing round details ... */}
-        <div>{roundDetails.name}</div>
-        <div>{courseName}</div>
-        <div>{roundDetails.date}</div>
-        <div>{roundDetails.nine}</div>
+      <div className="flex w-full justify-between text-xs pt-2">
+        <div>
+          <div>{roundDetails.name}</div>
+          <div>{courseName}</div>
+          <div>{roundDetails.date}</div>
+          <div>{roundDetails.nine}</div>
+        </div>
+        <button onClick={saveScores} disabled={!hasUnsavedChanges} className={`p-2 rounded text-xs ${hasUnsavedChanges ? "bg-green-500 text-white" : "bg-gray-300 text-gray-500"}`}>
+          Save Scores
+        </button>
       </div>
-
       <div className="">{renderScoreInputs()}</div>
       <div className="fixed bottom-3 w-full justify-center flex">
         <span>Holes left: {holesLeft}</span>
       </div>
-
       {isModalOpen && (
-        <PlayerSelectionModal
-          players={players}
-          selectedPlayers={selectedPlayers}
-          setSelectedPlayers={setSelectedPlayers}
-          onSave={handleSavePlayers}
-          onClose={() => setIsModalOpen(false)}
-        />
+        <PlayerSelectionModal players={players} selectedPlayers={selectedPlayers} setSelectedPlayers={setSelectedPlayers} onSave={() => setIsModalOpen(false)} onClose={() => setIsModalOpen(false)} />
       )}
-		{showConfetti && <Confetti width={width} height={height} />}
-		<RoundCompletionModal
-  isOpen={showCompletionModal}
-  onClose={() => {
-    setShowCompletionModal(false);
-    setShowConfetti(false);
-  }}
-  players={selectedPlayers}
-/>
-
+      {showConfetti && <Confetti width={width} height={height} />}
+      <RoundCompletionModal isOpen={showCompletionModal} onClose={() => setShowCompletionModal(false)} players={selectedPlayers} />
     </div>
   );
 };

@@ -4,6 +4,12 @@ import { db } from "../../../../../../../firebaseConfig";
 import { useRouter } from "next/router";
 import useRound from "../../../../../../../hooks/useRound";
 import FAQModal from "../../../../../../../components/FAQModal";
+import {
+  FaPlus,
+  FaMinus,
+  FaPeopleGroup,
+  FaArrowAltCircleLeft,
+} from "react-icons/fa";
 
 const RoundResults = () => {
   const [scores, setScores] = useState([]);
@@ -70,7 +76,7 @@ const RoundResults = () => {
         key={i + "holeHdr"}
         className="uppercase tracking-wider text-center font-normal"
       >
-        {i}
+        {round?.course?.nine === "back" ? i + 9 : i}
       </th>
     );
   }
@@ -148,7 +154,13 @@ const RoundResults = () => {
 
   return (
     <div className="overflow-x-auto p-4 text-xs flex justify-center items-center flex-col">
-      <div className="container">
+      <div className="flex w-full mb-4">
+        <FaArrowAltCircleLeft
+          className="w-8 h-8"
+          onClick={() => router.back()}
+        />
+      </div>
+      <div className="container flex flex-col">
         <div className="flex justify-between items-end w-full">
           <div className="pb-4 text-lg">
             <p>{round?.name}</p>
@@ -157,6 +169,9 @@ const RoundResults = () => {
           </div>
 
           <div className="flex w-full items-center justify-end pb-4">
+            <span className="px-2">
+              Sort: {sortCriteria === "net" ? "Net" : "Gross"}
+            </span>
             <label className="switch">
               <input
                 type="checkbox"
@@ -167,112 +182,111 @@ const RoundResults = () => {
               />
               <span className="slider round"></span>
             </label>
-            <span className="px-2">
-              Sort: {sortCriteria === "net" ? "Net" : "Gross"}
-            </span>
           </div>
         </div>
         <div className="bg-slate-500 flex justify-end p-1 text-white">
           <button onClick={() => setFAQModalOpen(true)}>FAQs</button>
         </div>
-        <table className="bg-white overflow-scroll text-center w-full">
-          <thead className="text-gray-800 border-b bg-gray-200">
-            <tr>
-              <th
-                className="p-2 text-left text-xs font-medium uppercase tracking-wider"
-                rowSpan="3"
-              >
-                Player
-              </th>
-              <th
-                className="p-2 text-left text-xs font-medium uppercase tracking-wider"
-                rowSpan="3"
-              >
-                Scorer
-              </th>
-              <th
-                className="p-2 text-center text-xs font-medium uppercase tracking-wider"
-                rowSpan="3"
-              >
-                HDCP
-              </th>
-              <td className="text-[8px]">HOLE</td>
-
-              {holeHeaders}
-              <th
-                className="p-2 text-center text-xs font-medium uppercase tracking-wider"
-                rowSpan="3"
-              >
-                Gross
-              </th>
-              <th
-                className="p-2 text-center text-xs font-medium uppercase tracking-wider"
-                rowSpan="3"
-              >
-                Net
-              </th>
-            </tr>
-            <tr className="">
-              <td className="text-[8px]">PAR</td>
-              {round?.course?.holePars.map((par, idx) => (
-                <td key={`holePar-${idx}`} className="text-center text-xs">
-                  {par}
-                </td>
-              ))}
-            </tr>
-            <tr className="">
-              <td className="text-[8px]">HDCP</td>
-              {round?.course?.holeHdcps.map((hdcp, idx) => (
-                <td key={idx + "hdcp"} className="text-center text-xs">
-                  {hdcp}
-                </td>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {scores?.length === 0 && (
+        <div className="w-full flex overflow-scroll text-black bg-white">
+          <table className="bg-white text-center w-full mb-6">
+            <thead className="text-gray-800 border-b bg-gray-200">
               <tr>
-                <td
-                  className="py-6 text-4xl uppercase text-slate-800"
-                  colSpan={12}
+                <th
+                  className="p-2 text-left text-xs font-medium uppercase tracking-wider"
+                  rowSpan="3"
                 >
-                  No scores entered yet
-                </td>
-              </tr>
-            )}
+                  Player
+                </th>
+                <th
+                  className="p-2 text-left text-xs font-medium uppercase tracking-wider"
+                  rowSpan="3"
+                >
+                  Scorer
+                </th>
+                <th
+                  className="p-2 text-center text-xs font-medium uppercase tracking-wider"
+                  rowSpan="3"
+                >
+                  HDCP
+                </th>
+                <td className="text-[8px]">HOLE</td>
 
-            {scores.map((score, playerIndex) => (
-              <tr key={score.playerId || `score-${playerIndex}`}>
-                <td className="p-2 whitespace-nowrap font-medium text-gray-900 text-left">
-                  {score.player}
-                </td>
-                <td className="p-2 whitespace-nowrap text-gray-500 text-left">
-                  {score.scorekeeper}
-                </td>
-                <td className="p-2 whitespace-nowrap text-gray-500 text-center">
-                  {score.hdcp}
-                </td>
-                <td></td>
-                {score.playerScores.map((playerScore, holeIndex) =>
-                  renderScoreWithStrokes(
-                    playerScore,
-                    score.hdcp,
-                    round?.course?.holeHdcps,
-                    holeIndex,
-                    playerIndex
-                  )
-                )}
-
-                <td className="p-2 whitespace-nowrap text-gray-500">
-                  {score.totalScore}
-                </td>
-                <td className="p-2 whitespace-nowrap text-gray-500">
-                  {score.netScore}
-                </td>
+                {holeHeaders}
+                <th
+                  className="p-2 text-center text-xs font-medium uppercase tracking-wider"
+                  rowSpan="3"
+                >
+                  Gross
+                </th>
+                <th
+                  className="p-2 text-center text-xs font-medium uppercase tracking-wider"
+                  rowSpan="3"
+                >
+                  Net
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+              <tr className="">
+                <td className="text-[8px]">PAR</td>
+                {round?.course?.holePars.map((par, idx) => (
+                  <td key={`holePar-${idx}`} className="text-center text-xs">
+                    {par}
+                  </td>
+                ))}
+              </tr>
+              <tr className="">
+                <td className="text-[8px]">HDCP</td>
+                {round?.course?.holeHdcps.map((hdcp, idx) => (
+                  <td key={idx + "hdcp"} className="text-center text-xs">
+                    {hdcp}
+                  </td>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {scores?.length === 0 && (
+                <tr>
+                  <td
+                    className="py-6 text-4xl uppercase text-slate-800"
+                    colSpan={12}
+                  >
+                    No scores entered yet
+                  </td>
+                </tr>
+              )}
+
+              {scores.map((score, playerIndex) => (
+                <tr key={score.playerId || `score-${playerIndex}`}>
+                  <td className="p-2 whitespace-nowrap font-medium text-gray-900 text-left">
+                    {score.player}
+                  </td>
+                  <td className="p-2 whitespace-nowrap text-gray-500 text-left">
+                    {score.scorekeeper}
+                  </td>
+                  <td className="p-2 whitespace-nowrap text-gray-500 text-center">
+                    {score.hdcp}
+                  </td>
+                  <td></td>
+                  {score.playerScores.map((playerScore, holeIndex) =>
+                    renderScoreWithStrokes(
+                      playerScore,
+                      score.hdcp,
+                      round?.course?.holeHdcps,
+                      holeIndex,
+                      playerIndex
+                    )
+                  )}
+
+                  <td className="p-2 whitespace-nowrap text-gray-500">
+                    {score.totalScore}
+                  </td>
+                  <td className="p-2 whitespace-nowrap text-gray-500">
+                    {score.netScore}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       <FAQModal
         isOpen={isFAQModalOpen}

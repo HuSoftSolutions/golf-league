@@ -34,7 +34,7 @@ const ManageLeague = () => {
   };
 
   return (
-    <div className="overflow-x-auto p-4 bg-white text-xs">
+    <div className="overflow-x-auto p-4 bg-white text-xs text-black">
       <div className="flex justify-between items-center mb-4">
 				<button onClick={() => router.back()}>back</button>
         <h2 className="text-xl font-semibold text-gray-800">Rounds in League</h2>
