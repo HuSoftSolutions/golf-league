@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-const PlayerModal = ({ isOpen, onClose, onSubmit, initialData = {}, scorekeeper }) => {
+const PlayerModal = ({ isOpen, onClose, onSubmit, initialData = {} }) => {
   const [playerData, setPlayerData] = useState({ displayName: '', hdcp: 0, email: '' });
 
   useEffect(() => {
-    setPlayerData(initialData.id ? initialData : { displayName: '', hdcp: 0, email: '', scorekeeper});
+    setPlayerData(initialData.id ? initialData : { displayName: '', hdcp: 0, email: ''});
   }, [initialData]);
 
   const handleChange = (e) => {

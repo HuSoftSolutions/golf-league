@@ -15,6 +15,7 @@ const ManagePlayers = ({ locationId, scorekeeper }) => {
   const openModal = (player = null) => {
     setEditingPlayer(player ? { ...player } : null);
     setModalOpen(true);
+		console.log('scorekeeper', scorekeeper)
   };
 
   const handleModalSubmit = async (playerData) => {
@@ -98,7 +99,6 @@ const ManagePlayers = ({ locationId, scorekeeper }) => {
         onClose={() => setModalOpen(false)} 
         onSubmit={handleModalSubmit}
         initialData={editingPlayer || {}}
-				scorekeeper={scorekeeper}
       />
     </div>
   );

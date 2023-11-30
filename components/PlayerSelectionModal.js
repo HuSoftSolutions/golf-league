@@ -2,14 +2,16 @@ import React from "react";
 import Select from "react-select";
 
 const PlayerSelectionModal = ({
+	scorekeeper,
   players,
   selectedPlayers,
   setSelectedPlayers,
   onSave,
   onClose,
 }) => {
+	
   const options = players.map((player) => ({
-    value: player,
+    value: {...player, scorekeeper},
     label: player.displayName,
   }));
 

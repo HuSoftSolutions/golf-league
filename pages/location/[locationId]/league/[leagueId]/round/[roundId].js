@@ -167,7 +167,7 @@ const RoundDetails = () => {
         <span>Holes left: {holesLeft}</span>
       </div>
       {isModalOpen && (
-        <PlayerSelectionModal players={players} selectedPlayers={selectedPlayers} setSelectedPlayers={setSelectedPlayers} onSave={() => setIsModalOpen(false)} onClose={() => setIsModalOpen(false)} />
+        <PlayerSelectionModal scorekeeper={user?.displayName} players={players} selectedPlayers={selectedPlayers} setSelectedPlayers={setSelectedPlayers} onSave={() => setIsModalOpen(false)} onClose={() => setIsModalOpen(false)} />
       )}
       {showConfetti && <Confetti width={width} height={height} />}
       <RoundCompletionModal isOpen={showCompletionModal} onClose={() => setShowCompletionModal(false)} players={selectedPlayers} />
